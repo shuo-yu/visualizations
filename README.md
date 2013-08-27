@@ -1,4 +1,4 @@
 visualizations
 ==============
 
-A collection of data visualizations.
+It's all in the gh-pages branch.
