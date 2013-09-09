@@ -1,0 +1,31 @@
+body {
+  margin: 0;
+}
+
+#vis {
+  position: fixed;
+  left: 5%;
+  top: 5%;
+  width: 90%;
+  height: 90%;
+  font: 12pt sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: black;
+  stroke-width: 1px;
+  shape-rendering: crispEdges;
+}
+
+.line {
+  fill: none;
+  stroke: black;
+  stroke-width: 3px;
+}
+
+.title {
+  text-anchor: middle;
+  font: 24pt sans-serif;
+}

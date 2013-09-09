@@ -17,7 +17,6 @@
         exports: 'Backbone',
         deps: ['underscore']
       }
-    },
-    catchError: true
+    }
   });
 }());
