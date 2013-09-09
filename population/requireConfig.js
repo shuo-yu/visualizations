@@ -1,10 +1,10 @@
 (function () {
-  var libDir = '../bower_components/';
+  var libDir = '../lib/';
   require.config({
     paths: {
-      'd3': libDir + 'd3/d3.min',
-      'underscore': libDir + 'underscore/underscore-min',
-      'backbone': libDir + 'backbone/backbone-min'
+      'd3': libDir + 'd3.min',
+      'underscore': libDir + 'underscore-min',
+      'backbone': libDir + 'backbone-min'
     },
     shim: {
       'd3': {
@@ -17,7 +17,6 @@
         exports: 'Backbone',
         deps: ['underscore']
       }
-    },
-    catchError: true
+    }
   });
 }());
