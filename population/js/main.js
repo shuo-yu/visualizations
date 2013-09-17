@@ -30,6 +30,9 @@ require(['d3', 'underscore', 'getterSetters', 'unPopulationData'], function (d3,
         .scale(y)
         .orient('left')
         .outerTickSize(0),
+      xPixelsPerTick = 70,
+      yPixelsPerTick = 30,
+      yMaxNumTicks = 6,
 
       // `line` computes the line of the plot based on data.
       line = d3.svg.line()
@@ -75,6 +78,11 @@ require(['d3', 'underscore', 'getterSetters', 'unPopulationData'], function (d3,
     // Set the scale ranges from the visualization size.
     x.range([0, width()]);
     y.range([height(), 0]);
+
+    // Set the number of tick marks so that tick density
+    // is consistent after resizing the visualization.
+    xAxis.ticks(width() / xPixelsPerTick);
+    yAxis.ticks(Math.min(height() / yPixelsPerTick, yMaxNumTicks));
 
     plotData();
 
