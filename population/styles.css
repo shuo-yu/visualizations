@@ -27,7 +27,7 @@ body {
 /* Style the X and Y axes. */
 .axis path,
 .axis line {
-  /* TODO find out why this is sometimes rendering as 2 pixels not 1. */
+  /* TODO find out why this is rendering as 2 pixels not 1. */
   fill: none;
   stroke: black;
   stroke-width: 1px;
@@ -37,8 +37,8 @@ body {
 /* Style the box around the visualization. */
 .frameRect {
   /* TODO find out why this is sometimes rendering as 0 pixels not 1. */
-  fill: black;
-  stroke: lightgray;
+  fill: none;
+  stroke: black;
   shape-rendering: crispEdges;
   stroke-width: 1px;
 }
