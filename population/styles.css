@@ -27,10 +27,20 @@ body {
 /* Style the X and Y axes. */
 .axis path,
 .axis line {
+  /* TODO find out why this is sometimes rendering as 2 pixels not 1. */
   fill: none;
   stroke: black;
   stroke-width: 1px;
   shape-rendering: crispEdges;
+}
+
+/* Style the box around the visualization. */
+.frameRect {
+  /* TODO find out why this is sometimes rendering as 0 pixels not 1. */
+  fill: black;
+  stroke: lightgray;
+  shape-rendering: crispEdges;
+  stroke-width: 1px;
 }
 
 /* Style the plot line */
@@ -45,3 +55,4 @@ body {
   text-anchor: middle;
   font: 24pt sans-serif;
 }
+

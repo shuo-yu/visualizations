@@ -46,7 +46,10 @@ require(['d3', 'underscore', 'getterSetters', 'unPopulationData'], function (d3,
       xAxisGroup = g.append('g'),
       yAxisGroup = g.append('g'),
       linePath = g.append('path'),
-      frameRect = svg.append('rect'),
+      frameRect = svg.append('rect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('class', 'frameRect'),
 
       // Add the "World Population" title.
       title = g.append('text')
@@ -84,9 +87,14 @@ require(['d3', 'underscore', 'getterSetters', 'unPopulationData'], function (d3,
     xAxis.ticks(width() / xPixelsPerTick);
     yAxis.ticks(Math.min(height() / yPixelsPerTick, yMaxNumTicks));
 
+    // Updates the box around the visualization.
+    frameRect
+      .attr('width', my.width())
+      .attr('height', my.height())
+
+    // Updates all data-driven aspects of the visualization.
     plotData();
 
-    updateFrameRect();
   }
 
   // Debounce computeVisualization() so multiple model changes
@@ -102,7 +110,7 @@ require(['d3', 'underscore', 'getterSetters', 'unPopulationData'], function (d3,
     // Get the data from the data cache.
     unPopulationData.get(function (err, data) {
 
-      // Set the scale domains from on the data.
+      // Set the scale domains based on the data.
       x.domain(d3.extent(data, function (d) {
         return d.date;
       }));
@@ -123,19 +131,6 @@ require(['d3', 'underscore', 'getterSetters', 'unPopulationData'], function (d3,
         .attr('class', 'y axis')
         .call(yAxis);
     });
-  }
-
-  // Updates the box around the visualization.
-  function updateFrameRect() {
-    frameRect
-      .attr('x', 0)
-      .attr('y', 0)
-      .attr('width', my.width())
-      .attr('height', my.height())
-      .attr('stroke-width', 1.5)
-      .attr('stroke', 'black')
-      .attr('fill-opacity', 0)
-      .style('shape-rendering', 'crispEdges');
   }
 
   // `width()` and `height()` compute the dimensions of the 
