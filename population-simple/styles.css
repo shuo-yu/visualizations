@@ -1,0 +1,63 @@
+/**
+ * CSS for UN Population Visualization.
+ *
+ * By Curran Kelleher
+ * Last updated 9/16/13
+ */
+
+/* Remove the default margin */
+body {
+  margin: 0;
+}
+
+/**
+ * Position the visualization in the center of the page
+ * with large percent-based margins.
+ */
+#vis {
+  position: fixed;
+  left: 5%;
+  top: 5%;
+  width: 90%;
+  height: 90%;
+  /* This font applies to axes labels */
+  font: 12pt sans-serif;
+}
+
+/* Style the X and Y axes. */
+.axis path,
+.axis line {
+  fill: none;
+  stroke: black;
+  stroke-width: 1px;
+  /*
+  shape-rendering: crispedges;
+  This causes the axis line to sometimes be 2 pixels, and 
+  sometimes be 1 pixel, which is unacceptable.
+  */
+}
+
+/* Style the box around the visualization. */
+.frameRect {
+  fill: none;
+  stroke: black;
+  stroke-width: 1px;
+  /*
+  shape-rendering: crispedges;
+  This causes the rectangle to sometimes be 1 pixels, and sometimes
+  not draw at all, which is unacceptable.
+  */
+}
+
+/* Style the plot line */
+.line {
+  fill: none;
+  stroke: black;
+  stroke-width: 3px;
+}
+
+/* Style the title in the center of the visualization. */
+.title {
+  text-anchor: middle;
+  font: 24pt sans-serif;
+}

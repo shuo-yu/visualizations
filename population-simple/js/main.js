@@ -1,15 +1,13 @@
 /**
- * A stacked area chart of UN Population data showing population of
- * world continents.
+ * A line chart of UN Population data.
  *
  * Inspired by:
  *
  *  * D3 line chart example http://bl.ocks.org/mbostock/3883245
  *  * Towards Reusable Charts http://bost.ocks.org/mike/chart/
- *  * Stacked Area Chart http://bl.ocks.org/mbostock/3885211
  *
  * By Curran Kelleher
- * Last updated 9/20/2013
+ * Last updated 9/16/2013
  */
 require(['d3', 'underscore', 'getterSetters', 'unPopulationData'], function (d3, _, getterSetters, unPopulationData) {
   "use strict";
@@ -35,16 +33,11 @@ require(['d3', 'underscore', 'getterSetters', 'unPopulationData'], function (d3,
       xPixelsPerTick = 70,
       yPixelsPerTick = 30,
       yMaxNumTicks = 6,
-      color = d3.scale.category20(),
 
-      // `area` and `stack` compute the geometry of the colored areas
-      area = d3.svg.area()
-        .x(function(d) { return x(d.date); })
-        .y0(function(d) { return y(d.y0); })
-        .y1(function(d) { return y(d.y0 + d.y); }),
-      stack = d3.layout.stack()
-        .values(function(d) { return d.values; })
-        .offset('zero'),
+      // `line` computes the line of the plot based on data.
+      line = d3.svg.line()
+        .x(function (d) { return x(d.date); })
+        .y(function (d) { return y(d.population); }),
 
       // Create the visualization DOM tree.
       div = d3.select('#vis'),
@@ -52,6 +45,7 @@ require(['d3', 'underscore', 'getterSetters', 'unPopulationData'], function (d3,
       g = svg.append('g'),
       xAxisGroup = g.append('g'),
       yAxisGroup = g.append('g'),
+      linePath = g.append('path'),
       frameRect = svg.append('rect')
         .attr('x', 0)
         .attr('y', 0)
@@ -114,26 +108,19 @@ require(['d3', 'underscore', 'getterSetters', 'unPopulationData'], function (d3,
 
     // Get the data from the data cache.
     unPopulationData.get(function (err, data) {
-      var world = _.first(data),
-          continents = _.rest(data),
-          layers = stack(continents),
-          layerGroups = g.selectAll('g')
-            .data(layers)
-            .enter().append('g');
 
       // Set the scale domains based on the data.
-      color.domain(_.pluck(data, 'name'));
-      x.domain(d3.extent(world.values, function (d) {
+      x.domain(d3.extent(data, function (d) {
         return d.date;
       }));
-      y.domain([0, d3.max(world.values, function (d) {
-        return d.y;
+      y.domain([0, d3.max(data, function (d) {
+        return d.population;
       })]);
 
-      // Draw the stacked areas from the data.
-      layerGroups.append('path')
-        .attr('d', function(d) { return area(d.values); })
-        .style('fill', function(d) { return color(d.name); });
+      // Draw the plot line from the data.
+      linePath.datum(data)
+        .attr('class', 'line')
+        .attr('d', line);
 
       // Update the axes to fit the data.
       xAxisGroup
