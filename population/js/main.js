@@ -43,8 +43,7 @@ require(['d3', 'underscore', 'getterSetters', 'unPopulationData'], function (d3,
         .y0(function(d) { return y(d.y0); })
         .y1(function(d) { return y(d.y0 + d.y); }),
       stack = d3.layout.stack()
-        .values(function(d) { return d.values; })
-        .offset('zero'),
+        .values(function(d) { return d.values; }),
 
       // Create the visualization DOM tree.
       div = d3.select('#vis'),
