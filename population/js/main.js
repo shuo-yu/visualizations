@@ -90,11 +90,10 @@ require(['d3', 'underscore', 'getterSetters', 'unPopulationData'], function (d3,
     // Updates the box around the visualization.
     frameRect
       .attr('width', my.width())
-      .attr('height', my.height())
+      .attr('height', my.height());
 
     // Updates all data-driven aspects of the visualization.
     plotData();
-
   }
 
   // Debounce computeVisualization() so multiple model changes

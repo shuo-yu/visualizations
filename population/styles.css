@@ -27,20 +27,26 @@ body {
 /* Style the X and Y axes. */
 .axis path,
 .axis line {
-  /* TODO find out why this is rendering as 2 pixels not 1. */
   fill: none;
   stroke: black;
   stroke-width: 1px;
-  shape-rendering: crispEdges;
+  /*
+  shape-rendering: crispedges;
+  This causes the axis line to sometimes be 2 pixels, and 
+  sometimes be 1 pixel, which is unacceptable.
+  */
 }
 
 /* Style the box around the visualization. */
 .frameRect {
-  /* TODO find out why this is sometimes rendering as 0 pixels not 1. */
   fill: none;
   stroke: black;
-  shape-rendering: crispEdges;
   stroke-width: 1px;
+  /*
+  shape-rendering: crispedges;
+  This causes the rectangle to sometimes be 1 pixels, and sometimes
+  not draw at all, which is unacceptable.
+  */
 }
 
 /* Style the plot line */
@@ -55,4 +61,3 @@ body {
   text-anchor: middle;
   font: 24pt sans-serif;
 }
-
