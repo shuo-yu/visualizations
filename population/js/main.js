@@ -116,12 +116,12 @@ require(['d3', 'underscore', 'getterSetters', 'unPopulationData'], function (d3,
       var world = _.first(data),
           continents = _.rest(data),
           layers = stack(continents),
-          layerGroups = g.selectAll('g')
-            .data(layers)
-            .enter().append('g');
+          layerGroups = g.selectAll('g').data(layers).enter().append('g');
+      console.log(layers);
+      
 
       // Set the scale domains based on the data.
-      color.domain(_.pluck(data, 'name'));
+      color.domain(_.pluck(continents, 'name'));
       x.domain(d3.extent(world.values, function (d) {
         return d.date;
       }));
@@ -129,10 +129,15 @@ require(['d3', 'underscore', 'getterSetters', 'unPopulationData'], function (d3,
         return d.y;
       })]);
 
+
       // Draw the stacked areas from the data.
       layerGroups.append('path')
         .attr('d', function(d) { return area(d.values); })
-        .style('fill', function(d) { return color(d.name); });
+        .style('fill', function(d) { return color(d.name); })
+        .on('mouseover', function (d) {
+          console.log(d);
+        })
+        .select(function(d) {console.log(d);});
 
       // Update the axes to fit the data.
       xAxisGroup
