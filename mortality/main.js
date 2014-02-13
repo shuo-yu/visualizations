@@ -14,9 +14,9 @@ require([dataModuleURL], function(data){
   
   // The following code draws from
   // http://bl.ocks.org/mbostock/3885211
-  var outerWidth = 800,
+  var outerWidth = 900,
       outerHeight = 600,
-      margin = {top: 20, right: 20, bottom: 30, left: 50},
+      margin = {top: 20, right: 230, bottom: 30, left: 0},
       width = outerWidth - margin.left - margin.right,
       height = outerHeight - margin.top - margin.bottom,
       x = d3.time.scale()
@@ -55,10 +55,17 @@ require([dataModuleURL], function(data){
       })
     };
   })
+
+  // Remove the "all causes" entry
+  causes = _.filter(causes, function (cause) {
+    return cause.name !== 'All causes';
+  });
+
   // Sort the layers by the most recent value.
   causes = _.sortBy(causes, function(cause) {
     return cause.values[cause.values.length - 1].y;
   });
+
   var layers = stack(causes);
 
   x.domain(d3.extent(data, function(d) { return d.date; }));
@@ -72,6 +79,13 @@ require([dataModuleURL], function(data){
     .attr('class', 'area')
     .attr('d', function(d) { return area(d.values); })
     .style('fill', function(d) { return color(d.name); });
+
+  cause.append('text')
+    .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
+    .attr('transform', function(d) { return 'translate(' + x(d.value.date) + ',' + y(d.value.y0 + d.value.y / 2) + ')'; })
+    .attr('x', 2)
+    .attr('dy', '.35em')
+    .text(function(d) { return d.name; });
 }, function(err){
   // If we are here, the data failed to load.
   console.log(err);
