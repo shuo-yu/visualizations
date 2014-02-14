@@ -3,6 +3,9 @@
 // Details of the data can be found here:
 // https://github.com/curran/data/tree/gh-pages/cdc/mortality
 //
+// The visualization draws from this D3 example:
+// http://bl.ocks.org/mbostock/3885211
+//
 // Curran Kelleher
 // 2/13/2014
 //
@@ -13,7 +16,7 @@ require([dataModuleURL], function(data){
   // http://bl.ocks.org/mbostock/3885211
   var outerWidth = 1000,
       outerHeight = 600,
-      margin = {top: 27, right: 240, bottom: 30, left: 0},
+      margin = {top: 27, right: 481, bottom: 30, left: 0},
       width = outerWidth - margin.left - margin.right,
       height = outerHeight - margin.top - margin.bottom,
       x = d3.time.scale()
@@ -35,19 +38,7 @@ require([dataModuleURL], function(data){
         .attr('width', width + margin.left + margin.right)
         .attr('height', height + margin.top + margin.bottom)
         .append('g')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')'),
-      shortNames = {
-        'Major cardiovascular diseases': 'Cardiovascular diseases',
-        'Symptoms, signs, and abnormal clinical and laboratory findings, not elsewhere classified': 'Unclassified conditions',
-        'Chronic lower respiratory diseases': 'Respiratory diseases'
-      };
-
-  // Gets a short version of a given cause of disease
-  // for use as labels.
-  function getShortName(name) {
-    var shortName = shortNames[name];
-    return shortName ? shortName : name;
-  }
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
   // Set the color domain so each color is a cause of death.
   color.domain(d3.keys(data[0]).filter(function(key) { return key !== 'year'; }));
@@ -95,14 +86,7 @@ require([dataModuleURL], function(data){
 
   // Add the labels to the right of each stacked area.
   cause.append('text')
-    .datum(function(d) {
-      return {
-        // Use custom short names for labels.
-        name: getShortName(d.name),
-
-        // Use the latest recorded value for label positioning.
-        value: d.values[d.values.length - 1]
-      }; })
+    .datum(function(d) { return {name: d.name, value: d.values[d.values.length - 1]}; })
     .attr('transform', function(d) { return 'translate(' + x(d.value.date) + ',' + y(d.value.y0 + d.value.y / 2) + ')'; })
     .attr('x', 2)
     .attr('dy', '.35em')
