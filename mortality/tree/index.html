@@ -1,0 +1,53 @@
+<!-- This page is an example visualization of Cause of Death hierarchy
+     gleaned from data from the Centers for Disease Control.
+
+     Details of the data can be found here:
+     https://github.com/curran/data/tree/gh-pages/cdc/mortality
+
+     The visualization draws from this D3 example:
+     http://bl.ocks.org/mbostock/4063550
+
+     Curran Kelleher
+     2/15/2014
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset=utf-8 />
+    <title>Causes of Death</title>
+    <script src="http://d3js.org/d3.v3.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+
+    <style>
+
+      body {
+        font: 12px sans-serif;
+      }
+
+      .node circle {
+        fill: #fff;
+        stroke: steelblue;
+        stroke-width: 1.5px;
+      }
+
+      .node {
+        font: 10px sans-serif;
+      }
+
+      .link {
+        fill: none;
+        stroke: #ccc;
+        stroke-width: 1.5px;
+      }
+
+      .title {
+        text-anchor: middle;
+        font-size: 2em;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="main.js"></script>
+  </body>
+</html>
