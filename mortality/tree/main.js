@@ -3,34 +3,48 @@
 // Details of the data can be found here:
 // https://github.com/curran/data/tree/gh-pages/cdc/mortality
 //
+// Draws from:
+//
+// Radial Tree
+// http://bl.ocks.org/mbostock/4063550
+//
+// Linear Tree
+// http://bl.ocks.org/mbostock/4063570
+//
+// Margin Convention
+// http://bl.ocks.org/mbostock/3019563
+//
 // Curran Kelleher
-// 2/15/2014
+// 2/17/2014
 //
 var dataModuleURL = 'http://curran.github.io/data/cdc/mortality/hierarchy/hierarchy.js';
 require([dataModuleURL], function(data){
-
-  console.log(data);
   
-  // The following code draws from
-  // http://bl.ocks.org/mbostock/4063550
-  var diameter = 1300,
+  var outerWidth = 1100,
+      outerHeight = 700,
+      nodeRadius = 2,
+      margin = {top: 0, right: 180, bottom: 0, left: 8},
+      width = outerWidth - margin.left - margin.right,
+      height = outerHeight - margin.top - margin.bottom,
 
       tree = d3.layout.tree()
-        .size([360, diameter / 2 - 120])
+        .size([height, width])
         .separation(function(a, b) { return (a.parent == b.parent ? 1 : 2) / a.depth; }),
 
-      diagonal = d3.svg.diagonal.radial()
-        .projection(function(d) { return [d.y, d.x / 180 * Math.PI]; }),
+      //diagonal = d3.svg.diagonal.radial()
+      //  .projection(function(d) { return [d.y, d.x / 180 * Math.PI]; }),
+      diagonal = d3.svg.diagonal()
+        .projection(function(d) { return [d.y, d.x]; }),
 
       svg = d3.select('body').append('svg')
-        .attr('width', diameter)
-        .attr('height', diameter - 150),
+        .attr('width', outerWidth)
+        .attr('height', outerHeight),
       
       g = svg.append('g')
-        .attr('transform', 'translate(' + diameter / 2 + ',' + diameter / 2 + ')'),
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')'),
 
       shortNames = {
-        'Major cardiovascular diseases': 'Heart disease',
+        'Major cardiovascular diseases': 'Cardiovascular diseases',
         'Symptoms, signs, and abnormal clinical and laboratory findings, not elsewhere classified': 'Unclassified conditions',
         'Chronic lower respiratory diseases': 'Respiratory diseases',
         'Pneumonitis due to solids and liquids': 'Pneumonitis',
@@ -52,16 +66,16 @@ require([dataModuleURL], function(data){
       .data(nodes)
     .enter().append('g')
       .attr('class', 'node')
-      .attr('transform', function(d) { return 'rotate(' + (d.x - 90) + ')translate(' + d.y + ')'; })
+      .attr('transform', function(d) { return 'translate(' + d.y + ',' + d.x + ')'; })
 
   node.append('circle')
-      .attr('r', 4.5);
+      .attr('r', nodeRadius);
 
   node.append('text')
       .attr('dy', '.31em')
-      .attr('text-anchor', function(d) { return d.x < 180 ? 'start' : 'end'; })
-      .attr('transform', function(d) { return d.x < 180 ? 'translate(8)' : 'rotate(180)translate(-8)'; })
-      .text(function(d) { return d.name; });
+      .attr('dx', '.31em')
+      .attr('text-anchor', function(d) { return 'start'; })
+      .text(function(d) { return getShortName(d.name); });
 
   // Gets a short version of a given cause of disease
   // for use as labels.
@@ -70,11 +84,10 @@ require([dataModuleURL], function(data){
     return shortName ? shortName : name;
   }
 
-
   // Add the title of the plot.
   svg.append('text')
-    .attr('x', diameter / 2 )
-    .attr('y', -3)
+    .attr('x', outerWidth / 2 + 120)
+    .attr('y', 20)
     .attr('class', 'title')
     .text('Causes of Death in the US');
 
