@@ -23,7 +23,10 @@
 define(['getShortName'], function (getShortName) {
 
   // A function called when the user navigates in the tree.
-  var onNavigate = function(){};
+  var onNavigate = function(){},
+
+      // Keeps track of the root of the visible tree.
+      root;
 
   // This function should be called once to set up the visualization.
   function init(svg, outerWidth, outerHeight, margin, hierarchy){
@@ -46,16 +49,13 @@ define(['getShortName'], function (getShortName) {
         // Use a separate group for links so they always appear behind nodes.
         linkG = g.append('g');
 
-    // Handles the special case of a single child,
-    // which is not handled properly by D3's tree layout.
-    function layoutNodes(root){
-      var nodes = tree.nodes(root);
-      if(nodes.length === 2) {
-        nodes.forEach(function(node){
-          node.x = height / 2;
-        });
-      }
-      return nodes;
+    // Initialize the visualization to show the top of the tree.
+    navigate(hierarchy);
+
+    function navigate(newRoot) {
+      root = newRoot;
+      onNavigate(childNames(newRoot));
+      update(newRoot);
     }
 
     function update(root){
@@ -67,7 +67,7 @@ define(['getShortName'], function (getShortName) {
       var link = linkG.selectAll('.link')
           .data(links);
       link.enter().append('path')
-          .attr('class', 'link')
+          .attr('class', 'link');
       link.attr('d', diagonal);
       link.exit().remove();
 
@@ -80,37 +80,41 @@ define(['getShortName'], function (getShortName) {
       node.attr('transform', function(d) { return 'translate(' + d.y + ',' + d.x + ')'; });
 
       nodeEnter.append('circle')
-          .attr('r', nodeRadius)
-          .on('click', function (d) {
-            var newRoot;
-
-            // If the user clicks on the root node,
-            // navigate up the tree.
-            if(d.isRoot && d.parent) {
-              newRoot = d.parent;
-            } else if(d._children) {
-              // Otherwise navigate down the tree.
-              newRoot = d;
-            }
-
-            onNavigate(childNames(newRoot));
-            update(newRoot);
-          });
+        .attr('r', nodeRadius)
+        .on('click', function(d){
+          // If the user clicks on the root node, navigate up the tree.
+          if(d.isRoot && d.parent) {
+            navigate(d.parent);
+          } else if(d._children) {
+            // Otherwise navigate down the tree.
+            navigate(d);
+          }
+        });
 
       node.select('circle')
-          .attr('class', function (d) { return d._children ? 'with-children' : 'without-children'; });
+        .attr('class', function (d) { return d._children ? 'with-children' : 'without-children'; });
 
       nodeEnter.append('text')
-          .attr('dy', '.31em')
-          .attr('dx', labelOffset + 'px')
-          .attr('text-anchor', 'start');
+        .attr('dy', '.31em')
+        .attr('dx', labelOffset + 'px')
+        .attr('text-anchor', 'start');
       node.select('text')
-          .text(function(d) { return getShortName(d.name); });
+        .text(function(d) { return getShortName(d.name); });
 
       node.exit().remove();
     }
-    update(hierarchy);
 
+    // Handles the special case of a single child,
+    // which is not handled properly by D3's tree layout.
+    function layoutNodes(root){
+      var nodes = tree.nodes(root);
+      if(nodes.length === 2) {
+        nodes.forEach(function(node){
+          node.x = height / 2;
+        });
+      }
+      return nodes;
+    }
   }
 
   // Expands and collapses nodes such that:
@@ -155,6 +159,11 @@ define(['getShortName'], function (getShortName) {
     init: init,
     onNavigate: function(callback) {
       onNavigate = callback;
+
+      // Call the callback once initially.
+      if(root){
+        onNavigate(childNames(root));
+      }
     }
   };
 });

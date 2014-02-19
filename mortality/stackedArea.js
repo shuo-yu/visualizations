@@ -33,80 +33,82 @@ define(['getShortName'], function (getShortName) {
           .append('g')
           .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    // Set the color domain so each color is a cause of death.
-    color.domain(d3.keys(data[0]).filter(function(key) { return key !== 'year'; }));
+    function update(){
+      // Set the color domain so each color is a cause of death.
+      color.domain(d3.keys(data[0]).filter(function(key) { return key !== 'year'; }));
 
-    // Parse years into Date objects for use with D3 time scale.
-    data.forEach(function(d) {
-      d.date = new Date(d.year, 0);
-    });
+      // Parse years into Date objects for use with D3 time scale.
+      data.forEach(function(d) {
+        d.date = new Date(d.year, 0);
+      });
 
-    // Transform the data for D3's stack layout.
-    // see https://github.com/mbostock/d3/wiki/Stack-Layout
-    var causes = color.domain().map(function(name) {
-      return {
-        name: name,
-        values: data.map(function(d) {
-          return {date: d.date, y: clean(d[name])};
-        })
-      };
-    })
+      // Transform the data for D3's stack layout.
+      // see https://github.com/mbostock/d3/wiki/Stack-Layout
+      var causes = color.domain().map(function(name) {
+        return {
+          name: name,
+          values: data.map(function(d) {
+            return {date: d.date, y: clean(d[name])};
+          })
+        };
+      })
 
-    // Remove the "all causes" entry.
-    causes = _.filter(causes, function (cause) {
-      return cause.name !== 'All causes';
-    });
+      // Remove the "all causes" entry.
+      causes = _.filter(causes, function (cause) {
+        return cause.name !== 'All causes';
+      });
 
-    // Sort the layers by the most recent value.
-    causes = _.sortBy(causes, function(cause) {
-      return cause.values[cause.values.length - 1].y;
-    });
+      // Sort the layers by the most recent value.
+      causes = _.sortBy(causes, function(cause) {
+        return cause.values[cause.values.length - 1].y;
+      });
 
-    var layers = stack(causes);
+      var layers = stack(causes);
 
-    x.domain(d3.extent(data, function(d) { return d.date; }));
+      x.domain(d3.extent(data, function(d) { return d.date; }));
 
-    var cause = g.selectAll('.cause')
-      .data(layers)
-      .enter().append('g')
-      .attr('class', 'cause');
+      var cause = g.selectAll('.cause')
+        .data(layers)
+        .enter().append('g')
+        .attr('class', 'cause');
 
-    // Add the stacked areas.
-    cause.append('path')
-      .attr('class', 'area')
-      .attr('d', function(d) { return area(d.values); })
-      .style('fill', function(d) { return color(d.name); });
+      // Add the stacked areas.
+      cause.append('path')
+        .attr('class', 'area')
+        .attr('d', function(d) { return area(d.values); })
+        .style('fill', function(d) { return color(d.name); });
 
-    // Add the legend.
-    // See http://bl.ocks.org/mbostock/3888852
-    var legend = g
-      .selectAll('.legend')
-        // Use sorted causes for legend.
-        .data(causes.map(function(d){ return d.name; }).reverse())
-      .enter().append('g')
-        .attr('class', 'legend')
-        .attr('transform', function(d, i) {
-          return 'translate(' + (width + 3) + ',' + i * 20 + ')'; 
-        });
+      // Add the legend.
+      // See http://bl.ocks.org/mbostock/3888852
+      var legend = g
+        .selectAll('.legend')
+          // Use sorted causes for legend.
+          .data(causes.map(function(d){ return d.name; }).reverse())
+        .enter().append('g')
+          .attr('class', 'legend')
+          .attr('transform', function(d, i) {
+            return 'translate(' + (width + 3) + ',' + i * 20 + ')'; 
+          });
 
-    legend.append('rect')
-        .attr('width', 18)
-        .attr('height', 18)
-        .style('fill', color);
+      legend.append('rect')
+          .attr('width', 18)
+          .attr('height', 18)
+          .style('fill', color);
 
-    legend.append('text')
-        .attr('x', 20)
-        .attr('y', 10)
-        .attr('dy', '.35em')
-        .text(getShortName);
+      legend.append('text')
+          .attr('x', 20)
+          .attr('y', 10)
+          .attr('dy', '.35em')
+          .text(getShortName);
 
-    // Add the X axis (years).
-    g.append('g')
-      .attr('class', 'x axis')
-      .attr('transform', 'translate(0,' + height + ')')
-      .call(xAxis);
-
-
+      // Add the X axis (years).
+      g.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(0,' + height + ')')
+        .call(xAxis);
+    }
+    // TODO refactor for dynaic data.
+    update();
   }
 
   // Replace missing data with 0 and parse strings into numbers.
