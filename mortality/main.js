@@ -8,7 +8,7 @@
 require(['tree', 'stackedArea'], function (tree, stackedArea) {
 
   // Fetch the data as an AMD module.
-  var tableURL = 'http://curran.github.io/data/cdc/mortality/mortality.js',
+  var tableURL = 'http://curran.github.io/data/cdc/mortality/mortality_full.js',
       hierarchyURL =  'http://curran.github.io/data/cdc/mortality/hierarchy/hierarchy.js';
   require([tableURL, hierarchyURL], function(table, hierarchy){
 
@@ -18,13 +18,13 @@ require(['tree', 'stackedArea'], function (tree, stackedArea) {
 
         // The number of pixels from the left where the
         // two visualizations meet.
-        horizontalSplit = 400,
+        horizontalSplit = 350,
 
         // The margins for each visualization.
         margins = {
           tree: {
             top: 0,
-            right: outerWidth - horizontalSplit + 150,
+            right: outerWidth - horizontalSplit + 160,
             bottom: 0,
             left: 8
           },
@@ -51,7 +51,7 @@ require(['tree', 'stackedArea'], function (tree, stackedArea) {
     // Called with the cause of death names to show.
     tree.onNavigate(function (names){
       console.log(names);
-      //stackedArea.update(names);
+      stackedArea.update(names);
     });
 
     // Add the title of the plot.

@@ -92,7 +92,9 @@ define(['getShortName'], function (getShortName) {
         });
 
       node.select('circle')
-        .attr('class', function (d) { return d._children ? 'with-children' : 'without-children'; });
+        .attr('class', function (d) {
+          return (d._children && d._children.length > 1) ? 'with-children' : 'without-children';
+        });
 
       nodeEnter.append('text')
         .attr('dy', '.31em')
