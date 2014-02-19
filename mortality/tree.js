@@ -38,15 +38,30 @@ define(['getShortName'], function (getShortName) {
           .projection(function(d) { return [d.y, d.x]; }),
         
         g = svg.append('g')
-          .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+          .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+
+        // Use a separate group for links so they always appear behind nodes.
+        linkG = g.append('g');
+
+    // Handles the special case of a single child,
+    // which is not handled properly by D3's tree layout.
+    function layoutNodes(root){
+      var nodes = tree.nodes(root);
+      if(nodes.length === 2) {
+        nodes.forEach(function(node){
+          node.x = height / 2;
+        });
+      }
+      return nodes;
+    }
 
     function update(root){
       showSubtree(root);
 
-      var nodes = tree.nodes(root),
-          links = tree.links(nodes);
+      var nodes = layoutNodes(root);
+      var links = tree.links(nodes);
 
-      var link = g.selectAll('.link')
+      var link = linkG.selectAll('.link')
           .data(links);
       link.enter().append('path')
           .attr('class', 'link')
@@ -64,8 +79,16 @@ define(['getShortName'], function (getShortName) {
       nodeEnter.append('circle')
           .attr('r', nodeRadius)
           .on('click', function (d) {
-            //console.dir(d);
-            update(d);
+           
+            // If the user clicks on the root node,
+            // navigate up the tree.
+            if(d.isRoot && d.parent) {
+              update(d.parent);
+            } else if(d._children) {
+              // Otherwise navigate down the tree.
+              update(d);
+              console.dir(d);
+            }
           });
 
       node.select('circle')
@@ -81,6 +104,7 @@ define(['getShortName'], function (getShortName) {
       node.exit().remove();
     }
     update(hierarchy);
+
   }
 
   // Expands and collapses nodes such that:
@@ -88,20 +112,17 @@ define(['getShortName'], function (getShortName) {
   // the children of `root` are collapsed.
   function showSubtree(root){
     expand(root);
-    if(root.children){
-      root.children.forEach(collapse);
-    }
-  }
 
-  // Toggle children.
-  // from mbostock.github.io/d3/talk/20111018/tree.html
-  function toggle(d) {
-    if (d.children) {
-      d._children = d.children;
-      d.children = null;
-    } else {
-      d.children = d._children;
-      d._children = null;
+    // The `isRoot` flag is used in the click event 
+    // handler to determine which navigation direction
+    // is intended - clicking on the root moves up the tree.
+    root.isRoot = true;
+
+    if(root.children){
+      root.children.forEach(function(node) {
+        collapse(node);
+        node.isRoot = false;
+      });
     }
   }
 
@@ -118,6 +139,19 @@ define(['getShortName'], function (getShortName) {
       d.children = null;
     }
   }
+
+  // Toggle children.
+  // from mbostock.github.io/d3/talk/20111018/tree.html
+  function toggle(d) {
+    if (d.children) {
+      d._children = d.children;
+      d.children = null;
+    } else {
+      d.children = d._children;
+      d._children = null;
+    }
+  }
+
 
   return {init: init};
 });
