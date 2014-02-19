@@ -39,7 +39,7 @@ require([dataModuleURL], function(data){
         .append('g')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')'),
       shortNames = {
-        'Major cardiovascular diseases': 'Heart disease',
+        'Major cardiovascular diseases': 'Cardiovascular diseases',
         'Symptoms, signs, and abnormal clinical and laboratory findings, not elsewhere classified': 'Unclassified conditions',
         'Chronic lower respiratory diseases': 'Respiratory diseases',
         'Pneumonitis due to solids and liquids': 'Pneumonitis',
@@ -97,7 +97,7 @@ require([dataModuleURL], function(data){
   cause.append('path')
     .attr('class', 'area')
     .attr('d', function(d) { return area(d.values); })
-    .style('fill', function(d) { console.log(d.name + ': '+color(d.name)); return color(d.name); });
+    .style('fill', function(d) { return color(d.name); });
 
   // Add the labels to the right of each stacked area.
 //  cause.append('text')

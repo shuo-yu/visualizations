@@ -17,24 +17,43 @@
     <title>Causes of Death</title>
     <script src="http://d3js.org/d3.v3.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
     <style>
       body {
         font: 12px sans-serif;
       }
+      .title {
+        text-anchor: middle;
+        font-size: 2em;
+      }
+
+      /* Begin style for stacked area visualization. */
       .axis path,
       .axis line {
         fill: none;
         stroke: #000;
         shape-rendering: crispEdges;
       }
-      .title {
-        text-anchor: middle;
-        font-size: 2em;
+      /* End style for stacked area visualization. */
+
+      /* Begin style for tree visualization. */
+      .node circle {
+        fill: #000;
       }
+
+      .node {
+        font: 10px sans-serif;
+      }
+
+      .link {
+        fill: none;
+        stroke: #ccc;
+        stroke-width: 1.5px;
+      }
+      /* Begin style for tree visualization. */
+
     </style>
   </head>
   <body>
-    <script src="main.js"></script>
+    <script data-main="main" src="http://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
   </body>
 </html>
