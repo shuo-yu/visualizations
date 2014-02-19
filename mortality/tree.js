@@ -25,9 +25,8 @@ define(['getShortName'], function (getShortName) {
   // This function should be called once to set up the visualization.
   function init(svg, outerWidth, outerHeight, margin, hierarchy){
 
-    hierarchy.children.forEach(toggle);
-
-    var nodeRadius = 2,
+    var nodeRadius = 4,
+        labelOffset = 7,
         width = outerWidth - margin.left - margin.right,
         height = outerHeight - margin.top - margin.bottom,
 
@@ -39,30 +38,59 @@ define(['getShortName'], function (getShortName) {
           .projection(function(d) { return [d.y, d.x]; }),
         
         g = svg.append('g')
-          .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')'),
-        nodes = tree.nodes(hierarchy),
-        links = tree.links(nodes);
+          .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-    var link = g.selectAll('.link')
-        .data(links)
-      .enter().append('path')
-        .attr('class', 'link')
-        .attr('d', diagonal);
+    function update(root){
+      showSubtree(root);
 
-    var node = g.selectAll('.node')
-        .data(nodes)
-      .enter().append('g')
-        .attr('class', 'node')
-        .attr('transform', function(d) { return 'translate(' + d.y + ',' + d.x + ')'; })
+      var nodes = tree.nodes(root),
+          links = tree.links(nodes);
 
-    node.append('circle')
-        .attr('r', nodeRadius);
+      var link = g.selectAll('.link')
+          .data(links);
+      link.enter().append('path')
+          .attr('class', 'link')
+      link.attr('d', diagonal);
+      link.exit().remove();
 
-    node.append('text')
-        .attr('dy', '.31em')
-        .attr('dx', '.31em')
-        .attr('text-anchor', function(d) { return 'start'; })
-        .text(function(d) { return getShortName(d.name); });
+      var node = g.selectAll('.node')
+          .data(nodes);
+      
+      var nodeEnter = node.enter().append('g')
+          .attr('class', 'node');
+
+      node.attr('transform', function(d) { return 'translate(' + d.y + ',' + d.x + ')'; });
+
+      nodeEnter.append('circle')
+          .attr('r', nodeRadius)
+          .on('click', function (d) {
+            //console.dir(d);
+            update(d);
+          });
+
+      node.select('circle')
+          .attr('class', function (d) { return d._children ? 'with-children' : 'without-children'; });
+
+      nodeEnter.append('text')
+          .attr('dy', '.31em')
+          .attr('dx', labelOffset + 'px')
+          .attr('text-anchor', 'start');
+      node.select('text')
+          .text(function(d) { return getShortName(d.name); });
+
+      node.exit().remove();
+    }
+    update(hierarchy);
+  }
+
+  // Expands and collapses nodes such that:
+  // `root` is expanded, and
+  // the children of `root` are collapsed.
+  function showSubtree(root){
+    expand(root);
+    if(root.children){
+      root.children.forEach(collapse);
+    }
   }
 
   // Toggle children.
@@ -74,6 +102,20 @@ define(['getShortName'], function (getShortName) {
     } else {
       d.children = d._children;
       d._children = null;
+    }
+  }
+
+  function expand(d){
+    if (d._children) {
+      d.children = d._children;
+      d._children = null;
+    }
+  }
+
+  function collapse(d) {
+    if (d.children) {
+      d._children = d.children;
+      d.children = null;
     }
   }
 

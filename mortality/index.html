@@ -37,11 +37,20 @@
 
       /* Begin style for tree visualization. */
       .node circle {
+        stroke: #000;
+        stroke-width: 1.5px;
+      }
+
+      .node .with-children {
         fill: #000;
       }
 
+      .node .without-children {
+        fill: #FFF;
+      }
+
       .node {
-        font: 10px sans-serif;
+        font: 12px sans-serif;
       }
 
       .link {
@@ -49,6 +58,7 @@
         stroke: #ccc;
         stroke-width: 1.5px;
       }
+
       /* Begin style for tree visualization. */
 
     </style>
