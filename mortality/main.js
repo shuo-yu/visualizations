@@ -47,6 +47,13 @@ require(['tree', 'stackedArea'], function (tree, stackedArea) {
     // Initialize the stacked area visualizaiton.
     stackedArea.init(svg, outerWidth, outerHeight, margins.stackedArea, table);
 
+    // Set up the stacked area to respond to tree navigations.
+    // Called with the cause of death names to show.
+    tree.onNavigate(function (names){
+      console.log(names);
+      //stackedArea.update(names);
+    });
+
     // Add the title of the plot.
     svg.append('text')
       .attr('x', outerWidth / 2 )

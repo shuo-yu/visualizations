@@ -22,6 +22,9 @@
 // Curran Kelleher 2/18/2014
 define(['getShortName'], function (getShortName) {
 
+  // A function called when the user navigates in the tree.
+  var onNavigate = function(){};
+
   // This function should be called once to set up the visualization.
   function init(svg, outerWidth, outerHeight, margin, hierarchy){
 
@@ -79,16 +82,19 @@ define(['getShortName'], function (getShortName) {
       nodeEnter.append('circle')
           .attr('r', nodeRadius)
           .on('click', function (d) {
-           
+            var newRoot;
+
             // If the user clicks on the root node,
             // navigate up the tree.
             if(d.isRoot && d.parent) {
-              update(d.parent);
+              newRoot = d.parent;
             } else if(d._children) {
               // Otherwise navigate down the tree.
-              update(d);
-              console.dir(d);
+              newRoot = d;
             }
+
+            onNavigate(childNames(newRoot));
+            update(newRoot);
           });
 
       node.select('circle')
@@ -140,18 +146,15 @@ define(['getShortName'], function (getShortName) {
     }
   }
 
-  // Toggle children.
-  // from mbostock.github.io/d3/talk/20111018/tree.html
-  function toggle(d) {
-    if (d.children) {
-      d._children = d.children;
-      d.children = null;
-    } else {
-      d.children = d._children;
-      d._children = null;
-    }
+  function childNames(d){
+    var children = d.children || d._children;
+    return _.pluck(children, 'name');
   }
 
-
-  return {init: init};
+  return {
+    init: init,
+    onNavigate: function(callback) {
+      onNavigate = callback;
+    }
+  };
 });
