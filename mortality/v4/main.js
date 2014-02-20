@@ -23,9 +23,9 @@ require(['tree', 'stackedArea'], function (tree, stackedArea) {
         // The margins for each visualization.
         margins = {
           tree: {
-            top: 0,
+            top: 20,
             right: outerWidth - horizontalSplit + 160,
-            bottom: 0,
+            bottom: 27,
             left: 8
           },
           stackedArea: {
@@ -39,7 +39,13 @@ require(['tree', 'stackedArea'], function (tree, stackedArea) {
         // Create the SVG element that will contain both visualizations.
         svg = d3.select('body').append('svg')
           .attr('width', outerWidth)
-          .attr('height', outerHeight);
+          .attr('height', outerHeight),
+          
+        // Add the title of the plot.
+        title = svg.append('text')
+          .attr('x', outerWidth / 2 )
+          .attr('y', 20)
+          .attr('class', 'title');
 
     // Initialize the tree visualization.
     tree.init(svg, outerWidth, outerHeight, margins.tree, hierarchy);
@@ -49,17 +55,10 @@ require(['tree', 'stackedArea'], function (tree, stackedArea) {
 
     // Set up the stacked area to respond to tree navigations.
     // Called with the cause of death names to show.
-    tree.onNavigate(function (names){
-      console.log(names);
+    tree.onNavigate(function (newRoot, names){
       stackedArea.update(names);
+      title.text('Causes of Death in the US: ' + newRoot.name);
     });
-
-    // Add the title of the plot.
-    svg.append('text')
-      .attr('x', outerWidth / 2 )
-      .attr('y', 20)
-      .attr('class', 'title')
-      .text('Causes of Death in the US');
     
   }, function(err){
     // If we are here, the data failed to load.

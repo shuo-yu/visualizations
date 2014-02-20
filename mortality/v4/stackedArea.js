@@ -47,12 +47,11 @@ define(['getShortName'], function (getShortName) {
     var causes,
         namesIndex = {};
 
+    x.domain(d3.extent(data, function(d) { return d.date; }));
+
     names.forEach(function(name){
       namesIndex[name] = true;
     });
-
-    // Set the color domain so each color is a cause of death.
-    color.domain(names)
 
     // Transform the data for D3's stack layout.
     // see https://github.com/mbostock/d3/wiki/Stack-Layout
@@ -70,7 +69,9 @@ define(['getShortName'], function (getShortName) {
       return cause.values[cause.values.length - 1].y;
     });
 
-    x.domain(d3.extent(data, function(d) { return d.date; }));
+    // Set the color domain so each color is a cause of death.
+    // Use sorted values.
+    color.domain(_.pluck(causes, 'name').reverse());
 
     // Add the stacked areas.
     var cause = g.selectAll('.cause')

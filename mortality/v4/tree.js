@@ -54,11 +54,13 @@ define(['getShortName'], function (getShortName) {
 
     function navigate(newRoot) {
       root = newRoot;
-      onNavigate(childNames(newRoot));
-      update(newRoot);
+      onNavigate(root, childNames(root));
+      update();
     }
 
-    function update(root){
+    function update(){
+
+      // Toggles nodes to show direct children only.
       showSubtree(root);
 
       var nodes = layoutNodes(root);
@@ -164,7 +166,7 @@ define(['getShortName'], function (getShortName) {
 
       // Call the callback once initially.
       if(root){
-        onNavigate(childNames(root));
+        onNavigate(root, childNames(root));
       }
     }
   };
