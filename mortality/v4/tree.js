@@ -83,27 +83,22 @@ define(['getShortName'], function (getShortName) {
 
       nodeEnter.append('circle')
         .attr('r', nodeRadius)
-        .on('click', function(d){
-          // If the user clicks on the root node, navigate up the tree.
-          if(d.isRoot && d.parent) {
-            navigate(d.parent);
-          } else if(d._children) {
-            // Otherwise navigate down the tree.
-            navigate(d);
-          }
-        });
+        .on('click', handleClick);
 
       node.select('circle')
         .attr('class', function (d) {
-          return (d._children && d._children.length > 1) ? 'with-children' : 'without-children';
-        });
+          return hasChildren(d) ? 'with-children' : 'without-children';
+        })
+        .call(setCursor);
 
       nodeEnter.append('text')
-        .attr('dy', '.31em')
+        .attr('dy', '.35em')
         .attr('dx', labelOffset + 'px')
-        .attr('text-anchor', 'start');
+        .attr('text-anchor', 'start')
+        .on('click', handleClick);
       node.select('text')
-        .text(function(d) { return getShortName(d.name); });
+        .text(function(d) { return getShortName(d.name); })
+        .call(setCursor);
 
       node.exit().remove();
     }
@@ -118,6 +113,33 @@ define(['getShortName'], function (getShortName) {
         });
       }
       return nodes;
+    }
+
+    // Handles clicking on a node in the tree (node or text).
+    function handleClick(d){
+      // If the user clicks on the root node, navigate up the tree.
+      if(d.isRoot && d.parent) {
+        navigate(d.parent);
+      } else if(d._children) {
+        // Otherwise navigate down the tree.
+        navigate(d);
+      }
+    }
+    
+    // Returns whether or not a node has more than one child,
+    // regardless of whether it is collapsed or not.
+    function hasChildren(d){
+      var children = d.children || d._children;
+      return (children && children.length > 1)
+    }
+
+    // Sets the cursor of the given selection (circle or text)
+    // to be a pointer if the node has more than one child,
+    // as an affordance that it can be clicked.
+    function setCursor(selection){
+      selection.style('cursor', function (d) {
+        return hasChildren(d) ? 'pointer' : 'auto';
+      });
     }
   }
 
