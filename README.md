@@ -1,7 +1,7 @@
 visualizations
 ==============
 
-Will be a collection of public data visualizations (only two so far).
+Will be a collection of public data visualizations (two so far).
 
 <a href="http://curran.github.io/visualizations/population"><img src="population/screenshot.png"></img></a>
 
